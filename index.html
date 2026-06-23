@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Joshua Santjer — Network & Cloud Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ── TOKENS ─────────────────────────────────────────────────── */
+    :root {
+      --bg:        #07090f;
+      --surface:   #0e1220;
+      --surface2:  #141929;
+      --border:    rgba(56,120,255,0.18);
+      --accent:    #3878ff;
+      --accent2:   #00d4ff;
+      --text:      #e8ecf4;
+      --muted:     #7a8499;
+      --success:   #22c55e;
+      --mono:      'JetBrains Mono', monospace;
+      --sans:      'Space Grotesk', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 16px;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ── SCROLL BLUR EFFECT ──────────────────────────────────────── */
+    .blur-section {
+      transition: filter 0.15s ease, opacity 0.15s ease;
+      will-change: filter, opacity;
+    }
+    body.scrolling .blur-section:not(.in-view) {
+      filter: blur(3px);
+      opacity: 0.55;
+    }
+
+    /* ── AMBIENT GRID ────────────────────────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(56,120,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(56,120,255,0.04) 1px, transparent 1px);
+      background-size: 44px 44px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── NAV ─────────────────────────────────────────────────────── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(7,9,15,0.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 clamp(1.25rem, 5vw, 4rem);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 58px;
+    }
+
+    .nav-logo {
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      color: var(--accent2);
+      letter-spacing: 0.04em;
+    }
+    .nav-logo span { color: var(--muted); }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 2rem;
+    }
+    nav ul a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.82rem;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    nav ul a:hover { color: var(--accent2); }
+
+    /* ── LAYOUT ──────────────────────────────────────────────────── */
+    main {
+      position: relative;
+      z-index: 1;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 clamp(1.25rem, 5vw, 2.5rem);
+    }
+
+    section {
+      padding: 7rem 0 5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    section:last-child { border-bottom: none; }
+
+    /* ── EYEBROW / LABELS ────────────────────────────────────────── */
+    .eyebrow {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .eyebrow::before {
+      content: '';
+      display: inline-block;
+      width: 28px;
+      height: 1px;
+      background: var(--accent);
+    }
+
+    h1 {
+      font-size: clamp(2.6rem, 6vw, 4rem);
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin-bottom: 1.5rem;
+    }
+    h1 .accent { color: var(--accent2); }
+    h1 .dim { color: var(--muted); font-weight: 300; }
+
+    h2 {
+      font-size: clamp(1.5rem, 3.5vw, 2.1rem);
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      margin-bottom: 2rem;
+      line-height: 1.2;
+    }
+
+    h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--text);
+    }
+
+    p { color: var(--muted); margin-bottom: 1rem; line-height: 1.8; }
+    p strong { color: var(--text); font-weight: 500; }
+
+    /* ── HERO ────────────────────────────────────────────────────── */
+    #hero {
+      padding-top: 10rem;
+      padding-bottom: 8rem;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+
+    .hero-terminal {
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-bottom: 2.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .hero-terminal .prompt { color: var(--accent2); }
+    .cursor {
+      display: inline-block;
+      width: 8px;
+      height: 1em;
+      background: var(--accent2);
+      animation: blink 1.1s step-end infinite;
+      vertical-align: text-bottom;
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    .hero-sub {
+      font-size: 1.1rem;
+      max-width: 600px;
+      margin-bottom: 3rem;
+    }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-bottom: 2.5rem;
+    }
+    .badge {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      padding: 0.35rem 0.85rem;
+      border-radius: 3px;
+      letter-spacing: 0.04em;
+      font-weight: 500;
+    }
+    .badge-blue { background: rgba(56,120,255,0.12); color: var(--accent); border: 1px solid rgba(56,120,255,0.35); }
+    .badge-cyan { background: rgba(0,212,255,0.10); color: var(--accent2); border: 1px solid rgba(0,212,255,0.3); }
+    .badge-green { background: rgba(34,197,94,0.10); color: var(--success); border: 1px solid rgba(34,197,94,0.3); }
+
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.65rem 1.5rem;
+      border-radius: 4px;
+      font-family: var(--sans);
+      font-weight: 600;
+      font-size: 0.88rem;
+      text-decoration: none;
+      transition: all 0.2s;
+      cursor: pointer;
+      border: none;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+    .btn-primary:hover { background: #2a63e8; transform: translateY(-1px); }
+    .btn-ghost {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent2); transform: translateY(-1px); }
+
+    /* ── ABOUT ───────────────────────────────────────────────────── */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 3rem;
+    }
+
+    .stat-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2.5rem;
+    }
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1.5rem 1.25rem;
+      text-align: center;
+    }
+    .stat-num {
+      font-family: var(--mono);
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: var(--accent2);
+      display: block;
+      margin-bottom: 0.3rem;
+    }
+    .stat-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+    }
+
+    /* ── CERT CARD ───────────────────────────────────────────────── */
+    .cert-card {
+      background: var(--surface);
+      border: 1px solid rgba(56,120,255,0.35);
+      border-radius: 8px;
+      padding: 2rem 2rem 2rem;
+      position: relative;
+      overflow: hidden;
+      margin-top: 2rem;
+    }
+    .cert-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+    }
+    .cert-logo {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--accent);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
+    .cert-title {
+      font-size: 1.35rem;
+      font-weight: 700;
+      margin-bottom: 0.4rem;
+    }
+    .cert-sub {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+    }
+    .cert-pill {
+      display: inline-block;
+      background: rgba(34,197,94,0.12);
+      color: var(--success);
+      border: 1px solid rgba(34,197,94,0.35);
+      border-radius: 20px;
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      padding: 0.25rem 0.8rem;
+      letter-spacing: 0.05em;
+    }
+
+    /* ── SKILLS ──────────────────────────────────────────────────── */
+    .skills-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 3.5rem;
+    }
+
+    .skill-group-label {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--accent);
+      margin-bottom: 1.2rem;
+    }
+
+    .skill-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .skill-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem 1.25rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      transition: border-color 0.2s;
+    }
+    .skill-item:hover { border-color: rgba(56,120,255,0.45); }
+
+    .skill-name {
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .skill-tag {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    /* ── LAB DOCS ────────────────────────────────────────────────── */
+    .lab-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.75rem;
+    }
+
+    .lab-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 2rem 2rem 1.75rem;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: start;
+      gap: 1.5rem;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .lab-card:hover {
+      border-color: rgba(56,120,255,0.5);
+      transform: translateX(3px);
+    }
+
+    .lab-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 6px;
+      background: rgba(56,120,255,0.12);
+      border: 1px solid rgba(56,120,255,0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+
+    .lab-body { min-width: 0; }
+    .lab-category {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--accent);
+      margin-bottom: 0.4rem;
+    }
+    .lab-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+    .lab-desc {
+      font-size: 0.84rem;
+      color: var(--muted);
+      margin-bottom: 1rem;
+      line-height: 1.6;
+    }
+    .lab-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .lab-tag {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      padding: 0.2rem 0.6rem;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 3px;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+    }
+
+    .lab-dl {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      flex-shrink: 0;
+    }
+    .dl-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.45rem 1rem;
+      border-radius: 4px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-decoration: none;
+      background: rgba(56,120,255,0.12);
+      color: var(--accent2);
+      border: 1px solid rgba(56,120,255,0.3);
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .dl-btn:hover { background: rgba(56,120,255,0.22); border-color: var(--accent); }
+    .dl-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+    /* ── CONTACT ─────────────────────────────────────────────────── */
+    .contact-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 3rem 2.5rem;
+      text-align: center;
+    }
+    .contact-card h2 { margin-bottom: 0.75rem; }
+    .contact-card p { max-width: 480px; margin: 0 auto 2rem; }
+    .contact-links {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .contact-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--mono);
+      font-size: 0.82rem;
+      color: var(--muted);
+      text-decoration: none;
+      padding: 0.5rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .contact-link:hover { color: var(--accent2); border-color: rgba(0,212,255,0.4); }
+
+    /* ── FOOTER ──────────────────────────────────────────────────── */
+    footer {
+      position: relative;
+      z-index: 1;
+      border-top: 1px solid var(--border);
+      padding: 2rem clamp(1.25rem, 5vw, 4rem);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    footer p { font-family: var(--mono); font-size: 0.72rem; color: var(--muted); margin: 0; }
+    footer span { color: var(--accent); }
+
+    /* ── SCROLL REVEAL ───────────────────────────────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── RESPONSIVE ──────────────────────────────────────────────── */
+    @media (max-width: 640px) {
+      .lab-card { grid-template-columns: auto 1fr; }
+      .lab-dl { grid-column: 1 / -1; flex-direction: row; flex-wrap: wrap; }
+      nav ul { display: none; }
+    }
+
+    /* ── REDUCE MOTION ───────────────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      .reveal { opacity: 1; transform: none; }
+      body.scrolling .blur-section:not(.in-view) { filter: none; opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-logo"><span>~/</span>jsantjer</div>
+    <ul>
+      <li><a href="#about">About</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#labs">Labs</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <main>
+
+    <section id="hero" class="blur-section">
+      <div class="hero-terminal">
+        <span class="prompt">$</span>
+        <span>Who I Am</span>
+        <span class="cursor"></span>
+      </div>
+
+      <div class="eyebrow">Network &amp; Cloud Engineer</div>
+
+      <h1>
+        Joshua<br>
+        <span class="accent">Santjer</span>
+      </h1>
+
+      <p class="hero-sub">
+        Cisco-certified networking professional with hands-on experience in routing protocols,
+        cloud infrastructure, cybersecurity, and enterprise networking.
+      </p>
+
+      <div class="badge-row">
+        <span class="badge badge-green">✓ CCNA Certified</span>
+        <span class="badge badge-blue">Cisco Networking</span>
+        <span class="badge badge-cyan">AWS Cloud</span>
+        <span class="badge badge-blue">OSPF · BGP · STP</span>
+        <span class="badge badge-cyan">Layer 2 Security</span>
+      </div>
+
+      <div class="cta-row">
+        <a href="#labs" class="btn btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
+          View Lab Reports
+        </a>
+        <a href="#contact" class="btn btn-ghost">Get In Touch</a>
+      </div>
+    </section>
+
+    <section id="about" class="blur-section">
+      <div class="eyebrow reveal">About Me</div>
+      <h2 class="reveal">Turning complex<br>networks into clean infrastructure.</h2>
+
+      <div class="about-grid">
+        <div>
+          <p class="reveal">
+            I'm a networking and cloud engineering student with hands-on experience configuring and troubleshooting systems. My work spans <strong>multi-area OSPF deployments</strong>, <strong>exterior BGP routing</strong>, <strong>Layer 2 attack mitigation</strong>, <strong>AWS cloud foundations</strong>, and <strong>AI-integrated network infrastructure</strong>.
+          </p>
+          <p class="reveal">
+            With the <strong>Cisco Certified Network Associate (CCNA)</strong> certification, I have proficiency from switching fundamentals all the way to cloud-native architectures.
+          </p>
+        </div>
+      </div>
+
+      <div class="stat-row reveal">
+        <div class="stat-card">
+          <span class="stat-num">6</span>
+          <span class="stat-label">Lab Reports</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-num">CCNA</span>
+          <span class="stat-label">Cisco Certified</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-num">AWS</span>
+          <span class="stat-label">Cloud Foundations</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-num">CCNP</span>
+          <span class="stat-label">Lab Level</span>
+        </div>
+      </div>
+
+      <div class="cert-card reveal">
+        <div class="cert-logo">Cisco Systems</div>
+        <div class="cert-title">Cisco Certified Network Associate</div>
+        <div class="cert-sub">Routing &amp; Switching · Enterprise Networking · Automation</div>
+        <span class="cert-pill">✓ Certified</span>
+      </div>
+    </section>
+
+    <section id="skills" class="blur-section">
+      <div class="eyebrow reveal">Technical Proficiency</div>
+      <h2 class="reveal">Technical Skills</h2>
+
+      <div class="skills-stack">
+
+        <div class="reveal">
+          <div class="skill-group-label">Routing &amp; Switching</div>
+          <div class="skill-list">
+            <div class="skill-item">
+              <span class="skill-name">OSPF (Single &amp; Multi-Area)</span>
+              <span class="skill-tag">CCNP Level</span>
+            </div>
+            <div class="skill-item">
+              <span class="skill-name">BGP (eBGP / iBGP)</span>
+              <span class="skill-tag">Exterior Routing</span>
+            </div>
+            <div class="skill-item">
+              <span class="skill-name">STP / RSTP / VLANs</span>
+              <span class="skill-tag">Layer 2</span>
+            </div>
+            <div class="skill-item">
+              <span class="skill-name">EtherChannel / Port Security</span>
+              <span class="skill-tag">CCNA</span>
+            </div>
+            <div class="skill-item">
+              <span class="skill-name">VTP / Inter-VLAN Routing</span>
+              <span class="skill-tag">CCNA</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="reveal">
+          <div class="skill-group-label">Security</div>
+          <div class="skill-list">
+            <div class="skill-item">
+              <span class="skill-name">Layer 2 Attack Mitigation</span>
+              <span class="skill-tag">VLAN Hopping / ARP</span>
+            </div>
+            <div class="skill-item">
+              <span class="skill-name">DHCP Snooping / DAI</span>
+              <span class="skill-tag">Layer 2 Security</span>
+            </div>
+            <div class="skill-item">
+              <span class="skill-name">ACLs / Firewall Concepts</span>
+              <span class="skill-tag">CCNA</span>
+            </div>
+            <div class="skill-item">
+              <span class="skill-name">Network Hardening</span>
+              <span class="skill-tag">Best Practices</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="reveal">
+          <div class="skill-group-label">Cloud &amp; Automation</div>
+          <div class="skill-list">
+            <div class="skill-item">
+              <span class="skill-name">AWS Cloud Foundations</span>
+              <span class="skill-tag">EC2 / VPC / S3</span>
+            </div>
+            <div class="skill-item">
+              <span class="skill-name">AI-Integrated Networking</span>
+              <span class="skill-tag">Local AI Engine Lab</span>
+            </div>
+            <div class="skill-item">
+              <span class="skill-name">Network Automation / CLI</span>
+              <span class="skill-tag">IOS / Shell</span>
+            </div>
+            <div class="skill-item">
+              <span class="skill-name">IP Addressing / Subnetting</span>
+              <span class="skill-tag">IPv4 / IPv6</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section id="labs" class="blur-section">
+      <div class="eyebrow reveal">Lab Reports</div>
+      <h2 class="reveal">Documented work from<br>Cisco &amp; AWS hands-on labs.</h2>
+
+      <p class="reveal" style="margin-bottom:2.5rem;">
+        Each report below is a complete lab document produced during coursework — click to download the original Word document and review the full configuration, topology diagrams, and analysis.
+      </p>
+
+      <div class="lab-list">
+
+        <div class="lab-card reveal">
+          <div class="lab-icon">🔒</div>
+          <div class="lab-body">
+            <div class="lab-category">Cisco CCN · Security</div>
+            <div class="lab-title">Layer 2 Attacks Lab</div>
+            <div class="lab-desc">Hands-on analysis and mitigation of Layer 2 network attacks including VLAN hopping, MAC flooding, ARP spoofing, and DHCP starvation. Configured defensive countermeasures across a simulated enterprise switch environment.</div>
+            <div class="lab-tags">
+              <span class="lab-tag">VLAN Hopping</span>
+              <span class="lab-tag">ARP Spoofing</span>
+              <span class="lab-tag">DHCP Snooping</span>
+              <span class="lab-tag">Port Security</span>
+              <span class="lab-tag">DAI</span>
+            </div>
+          </div>
+          <div class="lab-dl">
+            <a class="dl-btn" href="docs/Layer_2_Attacks_Lab_1.docx" download>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              .docx
+            </a>
+          </div>
+        </div>
+
+        <div class="lab-card reveal">
+          <div class="lab-icon">🌐</div>
+          <div class="lab-body">
+            <div class="lab-category">CCNP · Routing Protocols</div>
+            <div class="lab-title">Exterior BGP Lab</div>
+            <div class="lab-desc">Configured and verified exterior BGP (eBGP) peering between autonomous systems. Explored route advertisement, path attributes, AS-path manipulation, and BGP best-path selection in a multi-router topology.</div>
+            <div class="lab-tags">
+              <span class="lab-tag">eBGP</span>
+              <span class="lab-tag">AS-Path</span>
+              <span class="lab-tag">Route Advertisement</span>
+              <span class="lab-tag">Path Attributes</span>
+              <span class="lab-tag">Cisco IOS</span>
+            </div>
+          </div>
+          <div class="lab-dl">
+            <a class="dl-btn" href="docs/Exterior_BGP_Lab.docx" download>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              .docx
+            </a>
+          </div>
+        </div>
+
+        <div class="lab-card reveal">
+          <div class="lab-icon">🗺️</div>
+          <div class="lab-body">
+            <div class="lab-category">CCNP · Routing Protocols</div>
+            <div class="lab-title">Multi-Area OSPF Lab</div>
+            <div class="lab-desc">Designed and implemented a multi-area OSPF topology featuring Area 0 backbone, stub areas, and inter-area route summarization. Verified LSA types, neighbor adjacencies, and optimal path selection across multiple OSPF areas.</div>
+            <div class="lab-tags">
+              <span class="lab-tag">OSPF</span>
+              <span class="lab-tag">Multi-Area</span>
+              <span class="lab-tag">LSA Types</span>
+              <span class="lab-tag">Summarization</span>
+              <span class="lab-tag">ABR / ASBR</span>
+            </div>
+          </div>
+          <div class="lab-dl">
+            <a class="dl-btn" href="docs/Multi-Area_OSPF_CCNP_LAB.docx" download>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              .docx
+            </a>
+          </div>
+        </div>
+
+        <div class="lab-card reveal">
+          <div class="lab-icon">🤖</div>
+          <div class="lab-body">
+            <div class="lab-category">CCNP · AI Integration</div>
+            <div class="lab-title">Local AI Engine Lab</div>
+            <div class="lab-desc">Explored the deployment of a local AI engine within a network environment for intelligent traffic analysis, anomaly detection, and automated response. Bridged traditional Cisco networking with modern AI-driven operations.</div>
+            <div class="lab-tags">
+              <span class="lab-tag">AI / ML</span>
+              <span class="lab-tag">Network Automation</span>
+              <span class="lab-tag">Anomaly Detection</span>
+              <span class="lab-tag">Cisco CCNP</span>
+            </div>
+          </div>
+          <div class="lab-dl">
+            <a class="dl-btn" href="docs/Local_AI_Engine_CCNP_lab.docx" download>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              .docx
+            </a>
+          </div>
+        </div>
+
+        <div class="lab-card reveal">
+          <div class="lab-icon">☁️</div>
+          <div class="lab-body">
+            <div class="lab-category">AWS · Cloud Foundations</div>
+            <div class="lab-title">Amazon Cloud Foundations — Labs 1–3</div>
+            <div class="lab-desc">Completed foundational AWS labs covering core cloud services including EC2 instance management, S3 storage configuration, IAM policies, and VPC networking. Applied cloud networking concepts in a live AWS environment.</div>
+            <div class="lab-tags">
+              <span class="lab-tag">EC2</span>
+              <span class="lab-tag">S3</span>
+              <span class="lab-tag">VPC</span>
+              <span class="lab-tag">IAM</span>
+              <span class="lab-tag">AWS Console</span>
+            </div>
+          </div>
+          <div class="lab-dl">
+            <a class="dl-btn" href="docs/Amazon_Cloud_Foundations_Labs_1-3_Report.docx" download>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              .docx
+            </a>
+          </div>
+        </div>
+
+        <div class="lab-card reveal">
+          <div class="lab-icon">☁️</div>
+          <div class="lab-body">
+            <div class="lab-category">AWS · Cloud Foundations</div>
+            <div class="lab-title">Amazon Cloud Foundations — Labs 4–6</div>
+            <div class="lab-desc">Advanced AWS cloud labs covering RDS databases, Auto Scaling groups, Elastic Load Balancing, and CloudWatch monitoring. Deployed a multi-tier architecture demonstrating scalable, fault-tolerant cloud design principles.</div>
+            <div class="lab-tags">
+              <span class="lab-tag">RDS</span>
+              <span class="lab-tag">Auto Scaling</span>
+              <span class="lab-tag">ELB</span>
+              <span class="lab-tag">CloudWatch</span>
+              <span class="lab-tag">High Availability</span>
+            </div>
+          </div>
+          <div class="lab-dl">
+            <a class="dl-btn" href="docs/Amazon_Cloud_Foundations_Labs_4-6_Report_1.docx" download>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              .docx
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section id="contact" class="blur-section">
+      <div class="contact-card reveal">
+        <div class="eyebrow" style="justify-content:center;">Contact</div>
+        <h2>Let's connect.</h2>
+        <p>Open to networking opportunities, internships, and collaborations in network engineering, cloud infrastructure, or cybersecurity.</p>
+        <div class="contact-links">
+          <a href="https://github.com/JoshuaSantjer" class="contact-link" target="_blank">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.39.6.11.82-.26.82-.57 0-.28-.01-1.02-.01-2-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.74.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.8 1.3 3.49 1 .11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.14-.3-.54-1.52.12-3.17 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 3-.4c1.02 0 2.04.14 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.65.26 2.87.13 3.17.77.84 1.23 1.91 1.23 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22 0 1.6-.01 2.9-.01 3.29 0 .32.21.69.82.57C20.57 21.79 24 17.3 24 12c0-6.63-5.37-12-12-12z"/></svg>
+            GitHub
+          </a>
+          <a href="https://www.linkedin.com/in/joshua-santjer" class="contact-link" target="_blank">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.13 1.45-2.13 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM6.9 20.45H3.56V9H6.9v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z"/></svg>
+            LinkedIn
+          </a>
+          <a href="mailto:joshuasantjer@icloud.com" class="contact-link">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            Email Me
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>© 2025 <span>Joshua Santjer</span> · Network &amp; Cloud Engineer</p>
+    <p>CCNA Certified · Built with HTML/CSS · Hosted on GitHub Pages</p>
+  </footer>
+
+  <script>
+    /* ── SCROLL REVEAL ───────────────────────────────── */
+    const reveals = document.querySelectorAll('.reveal');
+    const revealObs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          revealObs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    reveals.forEach(el => revealObs.observe(el));
+
+    /* ── BLUR ON SCROLL ──────────────────────────────── */
+    const sections = document.querySelectorAll('.blur-section');
+
+    const sectionObs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('in-view');
+        } else {
+          e.target.classList.remove('in-view');
+        }
+      });
+    }, { threshold: 0.15 });
+    sections.forEach(s => sectionObs.observe(s));
+
+    let scrollTimer;
+    window.addEventListener('scroll', () => {
+      document.body.classList.add('scrolling');
+      clearTimeout(scrollTimer);
+      scrollTimer = setTimeout(() => {
+        document.body.classList.remove('scrolling');
+      }, 250);
+    }, { passive: true });
+  </script>
+</body>
+</html>
